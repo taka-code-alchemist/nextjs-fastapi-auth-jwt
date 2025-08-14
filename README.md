@@ -1,3 +1,3 @@
 # nextjs-fastapi-auth-jwt
 
-test
+![](./images/systemConfigurationDiagram.drawio.svg)
