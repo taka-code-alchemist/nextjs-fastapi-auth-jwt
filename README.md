@@ -2,7 +2,7 @@
 
 ## システム構成図
 
-![](./images/systemConfigurationDiagram.drawio.svg)
+![](./images/systemConfigurationDiagram.drawio.png)
 
 ## システム起動
 
