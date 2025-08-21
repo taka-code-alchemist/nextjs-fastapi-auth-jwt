@@ -55,6 +55,8 @@ class User(BaseModel):
 class UserInDB(User):
     hashed_password: str
 
+class GeneralResponse(BaseModel):
+    message: str
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -128,7 +130,7 @@ async def get_current_active_super_user(
     current_user: Annotated[User, Depends(get_current_user)],
 ):
     credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
+        status_code=status.HTTP_403_FORBIDDEN,
         detail="you are not super user",
         headers={"WWW-Authenticate": "Bearer"},
     )
@@ -143,6 +145,7 @@ async def get_current_active_super_user(
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ) -> Token:
+    print(f'username: {form_data.username}, password: {form_data.password}')
     user = authenticate_user(fake_users_db, form_data.username, form_data.password)
     if not user:
         raise HTTPException(
@@ -157,14 +160,18 @@ async def login_for_access_token(
     return Token(access_token=access_token, token_type="bearer")
 
 
-@router.get("/users/me/", response_model=User)
-async def read_users_me(
+@router.get("/users/me/", response_model=GeneralResponse)
+async def read_users_me():
+    return { "message": "だれでもOK"}
+
+@router.get("/users/limited/", response_model=User)
+async def read_users_limited(
     current_user: Annotated[User, Depends(get_current_active_user)],
 ):
     return current_user
 
 @router.get("/users/super/", response_model=User)
-async def read_users_me(
+async def read_users_super_limited(
     current_user: Annotated[User, Depends(get_current_active_super_user)],
 ):
     return current_user

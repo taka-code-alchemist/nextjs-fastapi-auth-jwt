@@ -8,4 +8,4 @@ app.include_router(auth.router)
 
 @app.get('/')
 async def root():
-    return {'message": "Hello World'}
+    return {'message': 'Hello World'}
