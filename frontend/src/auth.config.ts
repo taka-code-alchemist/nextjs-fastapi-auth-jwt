@@ -3,6 +3,7 @@ import { JWT } from "next-auth/jwt";
 import { NextRequest } from "next/server";
 
 export const authConfig = {
+    trustHost: true,
     pages: {
         signIn: "signin",
     },

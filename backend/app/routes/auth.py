@@ -18,7 +18,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 fake_users_db = {
     "limited": {
         "username": "limited",
-        "full_name": "John Doe",
+        "full_name": "一般ユーザー",
         "email": "johndoe@example.com",
         "hashed_password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",
         "is_super": False,
@@ -26,7 +26,7 @@ fake_users_db = {
     },
     "superlimited": {
         "username": "superlimited",
-        "full_name": "John Doe",
+        "full_name": "特権ユーザー",
         "email": "johndoe@example.com",
         "hashed_password": "$2b$12$EixZaYVK1fsbw1ZfbX3OXePaWxn96p36WQoeG6Lruj3vjPGga31lW",
         "is_super": True,
@@ -160,21 +160,27 @@ async def login_for_access_token(
     return Token(access_token=access_token, token_type="bearer")
 
 
-@router.get("/users/me/", response_model=GeneralResponse)
-async def read_users_me():
-    return { "message": "だれでもOK"}
-
-@router.get("/users/limited/", response_model=User)
-async def read_users_limited(
+@router.get("/users/me/", response_model=User)
+async def read_users_me(
     current_user: Annotated[User, Depends(get_current_active_user)],
 ):
     return current_user
 
-@router.get("/users/super/", response_model=User)
-async def read_users_super_limited(
+@router.get("/users/general/", response_model=GeneralResponse)
+async def general_method():
+    return { "message": "だれでもOK"}
+
+@router.get("/users/limited/", response_model=GeneralResponse)
+async def limited_method(
+    current_user: Annotated[User, Depends(get_current_active_user)],
+):
+    return { "message": "一般ユーザーだね"}
+
+@router.get("/users/super/", response_model=GeneralResponse)
+async def super_limited_method(
     current_user: Annotated[User, Depends(get_current_active_super_user)],
 ):
-    return current_user
+    return { "message": "特権ユーザーでございます"}
 
 
 @router.get("/users/me/items/")

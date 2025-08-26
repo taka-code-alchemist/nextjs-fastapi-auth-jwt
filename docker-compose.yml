@@ -1,0 +1,33 @@
+version: "3.7"
+services:
+  backend:
+    container_name: backend
+    build: ./backend
+    ports:
+      - "8000:80"
+    working_dir: /app
+    volumes:
+      - ./backend:/app
+      - /app/.venv
+    environment:
+      - PIPENV_VENV_IN_PROJECT=1
+    networks:
+      - mynetwork
+      - default
+  frontend:
+    container_name: frontend
+    build: ./frontend
+    environment:
+      - AUTH_SECRET=R6HBXy0QijFPL9gCiSdLrviLXfBt9m/vDYVcBR3haDs=
+      - API_HOST=backend:80
+    ports:
+      - "3000:3000"
+    working_dir: /src
+    volumes:
+      - ./frontend:/app
+    networks:
+      - mynetwork
+      - default
+networks:
+  mynetwork:
+    internal: true
